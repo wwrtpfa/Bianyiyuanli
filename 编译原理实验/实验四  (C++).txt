@@ -1,0 +1,318 @@
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+#include<malloc.h>
+#define STACK_INIT_SIZE 100
+#define STACKINCREMENT 10
+#include<iostream>
+using namespace std;
+typedef struct{
+    char *base;
+    char *top;
+    int stacksize;
+}SqStack;
+typedef struct{
+    int *base;
+    int *top;
+    int stacksize;
+}SqStack1;
+int InitStack(SqStack &S){
+    S.base=(char*)malloc(STACK_INIT_SIZE*sizeof(char));
+    if(!S.base) exit(0);
+    S.top=S.base;
+    S.stacksize=STACK_INIT_SIZE;
+    return 1;
+}
+int StackEmpty(SqStack S){
+    int a;
+    if(S.top==S.base) a=1;
+    else a=0;
+    return a;
+}
+int StackLength(SqStack S){
+    int a;
+    a=S.top-S.base;
+    return a;
+}
+char GetTop(SqStack S,char &e){
+    if(S.top==S.base) return 0;
+    e=*(S.top-1);
+    return e;
+}
+int Push(SqStack &S,char e){
+    if(S.top-S.base>=S.stacksize){
+        S.base=(char*)realloc(S.base,(S.stacksize+STACKINCREMENT)*sizeof(char));
+        if(!S.base) exit(0);
+        S.top=S.base+S.stacksize;
+        S.stacksize+=STACKINCREMENT;
+    }
+    *S.top++=e;
+    return 1;
+}
+int Pop(SqStack &S,char &e){
+    if(S.top==S.base) return 0;
+    e=*--S.top;
+    return e;
+}
+int InitStack1(SqStack1 &S){
+    S.base=(int*)malloc(STACK_INIT_SIZE*sizeof(int));
+    if(!S.base) exit(0);
+    S.top=S.base;
+    S.stacksize=STACK_INIT_SIZE;
+    return 1;
+}
+int StackEmpty1(SqStack1 S){
+    int a;
+    if(S.top==S.base) a=1;
+    else a=0;
+    return a;
+}
+int StackLength1(SqStack1 S){
+    int a;
+    a=S.top-S.base;
+    return a;
+}
+int GetTop1(SqStack1 S,int &e){
+    if(S.top==S.base) return 0;
+    e=*(S.top-1);
+    return e;
+}
+int Push1(SqStack1 &S,int e){
+    if(S.top-S.base>=S.stacksize){
+        S.base=(int*)realloc(S.base,(S.stacksize+STACKINCREMENT)*sizeof(int));
+        if(!S.base) exit(0);
+        S.top=S.base+S.stacksize;
+        S.stacksize+=STACKINCREMENT;
+    }
+    *S.top++=e;
+    return 1;
+}
+int Pop1(SqStack1 &S,int &e){
+    if(S.top==S.base) return 0;
+    e=*--S.top;
+    return e;
+}
+void printStack(SqStack S){
+    char *p=S.base;
+    while(p!=S.top){
+        printf("%c",*p);
+        p++;
+    }
+    int i;
+    if(StackLength(S)<10){
+        for(i=0;i<10-StackLength(S);i++)
+            printf(" ");
+    }
+    else{
+    printf("       ");
+    }
+}
+void printStack1(SqStack1 S){
+    int *p=S.base,a=0;
+    while(p!=S.top){
+        if(*p>=10) {
+            a+=3;
+            printf("(%d)",*p);
+        }
+        else{
+        printf("%d",*p);
+        }
+        p++;
+    }
+    int i;
+    if(StackLength1(S)+a<10){
+        for(i=0;i<10-StackLength1(S)-a;i++)
+            printf(" ");
+    }
+    else{
+    printf("       ");
+    }
+}
+void printstring(char b[],int k,int l){
+    int i;
+    for(i=k;i<l;i++){
+        printf("%c",b[i]);
+    }
+    if(l-k<12){
+        for(i=0;i<12-l+k;i++)
+            printf(" ");
+    }
+    else{
+    printf("       ");
+    }
+}
+int change(char s[],char a){
+    int i,index=-1;
+    for(i=0;i<8;i++){
+        if(s[i]==a){
+          index=i;
+        break;
+        }
+    }
+    return index;
+}
+char Action(char c[12][5],char s[],int e,char a){
+    int i=e,j;
+    j=change(s,a);
+    if(j==-1)
+    return ' ';
+    else
+    return c[i][j];
+}
+int Action_index(int c[12][5],char s[],int e,char a){
+    int i=e,j;
+    j=change(s,a);
+    if(j==-1)
+    return -1;
+    else
+    return c[i][j];
+}
+int GOTo_index(int c[12][3],char s[],int e,char a){
+    int i=e,j;
+    j=change(s,a);
+    if(j==-1)
+    return -1;
+    else
+    return c[i][j-5];
+}
+int LR0(char b[],int l){
+     int word_len[7]={1,2,2,2,1,2,1};
+     char word_left[7]={'S','E','E','A','A','B','B'};
+     char Action_char[12][5]={
+     {'S','S',' ',' ',' '},
+     {' ',' ',' ',' ','a'},
+     {' ',' ','S','S',' '},
+     {' ',' ','S','S',' '},
+     {' ',' ','S','S',' '},
+     {' ',' ','S','S',' '},
+     {'r','r','r','r','r'},
+     {'r','r','r','r','r'},
+     {'r','r','r','r','r'},
+     {'r','r','r','r','r'},
+     {'r','r','r','r','r'},
+     {'r','r','r','r','r'}
+     };
+     int Action_int[12][5]={
+     {2,3,-1,-1,-1},
+     {-1,-1,-1,-1,-2},
+     {-1,-1,4,10,-1},
+     {-1,-1,5,11,-1},
+     {-1,-1,4,10,-1},
+     {-1,-1,5,11,-1},
+     {1,1,1,1,1},
+     {2,2,2,2,2},
+     {3,3,3,3,3},
+     {5,5,5,5,5},
+     {4,4,4,4,4},
+     {6,6,6,6,6}
+     };
+     int GoTo[12][3]={
+     {1,-1,-1},
+     {-1,-1,-1},
+     {-1,6,-1},
+     {-1,-1,7},
+     {-1,8,-1},
+     {-1,-1,9},
+     {-1,-1,-1},
+     {-1,-1,-1},
+     {-1,-1,-1},
+     {-1,-1,-1},
+     {-1,-1,-1},
+     {-1,-1,-1},
+     };
+    char s[100]={'a','b','c','d','#','E','A','B'};
+    char a,w,x;
+    int k=0,flag=0,e,index,count1=1;
+    SqStack analyze;
+    SqStack1 condition;
+    InitStack(analyze);
+    InitStack1(condition);
+    Push(analyze,s[4]);
+    Push1(condition,0);
+    a=b[k];
+    printf("步骤 ");
+    printf("状态栈    ");
+    printf("符号栈    ");
+    printf("当前输入串  ");
+    printf("ACTION ");
+    printf("GOTO\n");
+    while(1){
+    GetTop1(condition,e);
+        w=Action(Action_char,s,e,a);
+        switch(w){
+                case 'S':
+                    printf("%d    ",count1++);
+                    printStack1(condition);
+                    printStack(analyze);
+                    printstring(b,k,l);
+                    index=Action_index(Action_int,s,e,a);
+                    printf("S%d\n",index);
+                        Push1(condition,index);
+                        Push(analyze,a);
+                        k++;
+                        index++;
+                        a=b[k];
+                    break;
+                case 'r':
+                    int i;
+                    printf("%d    ",count1++);
+                    printStack1(condition);
+                    printStack(analyze);
+                    printstring(b,k,l);
+                    index=Action_index(Action_int,s,e,a);
+                    printf("r%d     ",index);
+                    for(i=0;i<word_len[index];i++){
+                        Pop1(condition,e);
+                        Pop(analyze,x);
+                    }
+                    Push(analyze,word_left[index]);
+                    GetTop1(condition,e);
+                    GetTop(analyze,x);
+                    e=GOTo_index(GoTo,s,e,x);
+                    printf("%d\n",e);
+                    Push1(condition,e);
+                    break;
+                case 'a':
+                    printf("%d    ",count1++);
+                    printStack1(condition);
+                    printStack(analyze);
+                    printstring(b,k,l);
+                    flag=1;
+                    w='=';
+                    break;
+                case ' ':
+                    printf("%d    ",count1++);
+                    printStack1(condition);
+                    printStack(analyze);
+                    printstring(b,k,l);
+                    flag=0;
+                    w='=';
+                    break;
+    }
+    if(w=='=')
+    break;
+    }
+    return flag;
+}
+int main()
+{
+    int k,flag;
+    char b[100];
+    k=0;
+    scanf("%c",&b[k]);
+    while(b[k]!='#'){
+        k++;
+        scanf("%c",&b[k]);
+    }
+    k++;
+    flag=LR0(b,k);
+    if(flag==1){
+    printf("acc\n");
+    printf("由上述分析过程可知，该串是文法的合法句子\n");
+    }
+    else{
+    printf("报错\n");
+    printf("由上述分析过程可知，该串不是文法的合法句子\n");
+    }
+    return 0;
+}
